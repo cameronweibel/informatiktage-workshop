@@ -33,9 +33,12 @@
   .slide.bg-footer { background: var(--footer-bg); color: #fff; }
   .slide.bg-footer h1, .slide.bg-footer h2 { color: #fff; }
   .slide.bg-footer p { color: var(--muted); }
-  .slide.bg-competition { background: linear-gradient(135deg, #7C3AED, #8B5CF6); color: #fff; }
+  .slide.bg-competition { background: linear-gradient(135deg, #2563EB, #3B82F6); color: #fff; }
   .slide.bg-competition h1, .slide.bg-competition h2, .slide.bg-competition h3 { color: #fff; }
   .slide.bg-competition p, .slide.bg-competition li { color: rgba(255,255,255,0.85); }
+  .slide.bg-judging { background: linear-gradient(135deg, #7C3AED, #8B5CF6); color: #fff; }
+  .slide.bg-judging h1, .slide.bg-judging h2, .slide.bg-judging h3 { color: #fff; }
+  .slide.bg-judging p, .slide.bg-judging li { color: rgba(255,255,255,0.85); }
 
   .slide::before { content: ''; position: absolute; top: -15%; right: -8%; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(34,165,119,0.05) 0%, transparent 70%); pointer-events: none; }
   .slide::after { content: ''; position: absolute; bottom: -15%; left: -8%; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(34,165,119,0.04) 0%, transparent 70%); pointer-events: none; }
@@ -177,16 +180,15 @@
   <div class="slide">
     <span class="tag tag-green"><span class="tag-dot"></span> Overview</span>
     <h2>Workshop Schedule</h2>
-    <h3>1 hour 50 minutes, 3 competitions, 1 winning team</h3>
+    <h3>1 hour 50 minutes, 2 competitions, chocolate for 1st and 2nd place</h3>
     <div class="schedule-grid">
       <div class="time">0:00</div><div class="activity">Welcome &amp; introductions</div><div class="duration">10 min</div>
       <div class="time">0:10</div><div class="activity">AI &amp; Prompt Engineering crash course</div><div class="duration">10 min</div>
       <div class="time" style="color:var(--purple-500);">0:20</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 1: Name &amp; Logo</div><div class="duration" style="color:var(--purple-500);">25 min</div>
       <div class="time">0:45</div><div class="activity">Logo judging &amp; voting</div><div class="duration">5 min</div>
-      <div class="time" style="color:var(--purple-500);">0:50</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 2: Website Build</div><div class="duration" style="color:var(--purple-500);">30 min</div>
+      <div class="time" style="color:var(--purple-500);">0:50</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 2: Website Build + Pitch</div><div class="duration" style="color:var(--purple-500);">30 min</div>
       <div class="time">1:20</div><div class="activity">Website judging</div><div class="duration">5 min</div>
-      <div class="time" style="color:var(--purple-500);">1:25</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 3: The Pitch</div><div class="duration" style="color:var(--purple-500);">15 min</div>
-      <div class="time">1:40</div><div class="activity">Pitch presentations &amp; judging</div><div class="duration">8 min</div>
+      <div class="time">1:25</div><div class="activity">Pitch prep &amp; presentations</div><div class="duration">23 min</div>
       <div class="time">1:48</div><div class="activity">Awards &amp; wrap-up</div><div class="duration">2 min</div>
     </div>
   </div>
@@ -232,7 +234,7 @@
     <span class="tag tag-green"><span class="tag-dot"></span> Key Skill</span>
     <h2>The T.C.R.E.I. Prompt Framework</h2>
     <div class="split-layout" style="margin-top:0.5rem;">
-      <div><img src="images/prompt_engineering_crash_course_slide4_img0.png" alt="T.C.R.E.I." class="img-rounded" style="width:100%;"></div>
+      <div><img src="images/prompt_engineering_crash_course_slide4_img0.png" alt="T.C.R.E.I." class="img-rounded" style="width:80%; margin:0 auto; display:block;"></div>
       <div><ul class="framework-list" style="margin-top:0;">
         <li><strong>Task.</strong> What do you want? Be specific. Add a persona.</li>
         <li><strong>Context.</strong> Background info the AI needs.</li>
@@ -289,9 +291,9 @@
   <!-- ══ COMPETITION 1: NAME & LOGO (25 min) ══ -->
 
   <div class="slide bg-competition">
-    <span class="tag tag-white"><span class="tag-dot"></span> Competition 1 of 3</span>
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 1 of 2</span>
     <h1 style="font-size:2.8rem;">Name &amp; Logo</h1>
-    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Brainstorm a business idea, choose a name, and design a logo. Best logo wins.</p>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Brainstorm a business idea, choose a name, and design a logo. 1st and 2nd place get chocolate!</p>
     <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 25 minutes</div>
   </div>
 
@@ -437,10 +439,11 @@
       </div>
     </div>
     <p style="font-size:0.9rem; color:var(--muted); margin-top:0.75rem;">Also works: ChatGPT (if you have Plus) or any other image generation tool you have access to</p>
+    <p style="font-size:0.9rem; color:var(--green-500); font-weight:700; margin-top:0.25rem;">Tip: Upload a logo you like as part of your prompt - the AI will use it as a reference for style!</p>
     <div class="timer-banner"><span class="timer-icon">&#9202;</span> 20 minutes remaining - GO!</div>
   </div>
 
-  <div class="slide bg-competition">
+  <div class="slide bg-judging">
     <span class="tag tag-white"><span class="tag-dot"></span> Judging Time</span>
     <h1 style="font-size:2.6rem;">Logo Competition</h1>
     <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">Each team: 30 seconds to present your company name and logo. Then we vote!</p>
@@ -514,9 +517,9 @@
   <!-- ══ COMPETITION 2: WEBSITE BUILD (30 min) ══ -->
 
   <div class="slide bg-competition">
-    <span class="tag tag-white"><span class="tag-dot"></span> Competition 2 of 3</span>
-    <h1 style="font-size:2.8rem;">Website Build</h1>
-    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Build a live website for your startup using AI. Best design wins.</p>
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 2 of 2</span>
+    <h1 style="font-size:2.8rem;">Website Build + Pitch</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Build a live website, then pitch it. 1st and 2nd place each get chocolate!</p>
     <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 30 minutes</div>
   </div>
 
@@ -544,7 +547,7 @@
         </ul>
       </div>
       <div class="col-card" style="text-align:center;">
-        <img src="images/claude-logo.svg" alt="Claude" style="width:100%; max-width:200px; margin:0 auto 1rem; border-radius:12px;">
+        <img src="images/claude-logo.png" alt="Claude" style="width:100%; max-width:200px; margin:0 auto 1rem; border-radius:12px;">
         <h3>Claude (Vibe Code)</h3>
         <ul>
           <li>Test designs and iterate for free</li>
@@ -569,7 +572,7 @@
     <div class="timer-banner"><span class="timer-icon">&#9202;</span> Keep building! Time is ticking.</div>
   </div>
 
-  <div class="slide bg-competition">
+  <div class="slide bg-judging">
     <span class="tag tag-white"><span class="tag-dot"></span> Judging Time</span>
     <h1 style="font-size:2.6rem;">Website Competition</h1>
     <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">Each team: 1 minute to show your live website on the big screen!</p>
@@ -584,9 +587,9 @@
   <!-- ══ COMPETITION 3: THE PITCH (15 min) ══ -->
 
   <div class="slide bg-competition">
-    <span class="tag tag-white"><span class="tag-dot"></span> Competition 3 of 3</span>
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 2 (continued)</span>
     <h1 style="font-size:2.8rem;">The Pitch</h1>
-    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Prepare a 2-minute Shark Tank-style pitch. Most convincing team wins it all.</p>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Prepare a 2-minute Shark Tank-style pitch. Combined with your website score - 1st and 2nd place get chocolate!</p>
     <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 15 minutes to prepare</div>
   </div>
 
@@ -626,7 +629,7 @@
     <div class="timer-banner"><span class="timer-icon">&#9202;</span> Practice your pitch! Time is almost up.</div>
   </div>
 
-  <div class="slide bg-competition">
+  <div class="slide bg-judging">
     <span class="tag tag-white"><span class="tag-dot"></span> Showtime</span>
     <h1 style="font-size:2.8rem;">Pitch Presentations</h1>
     <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Each team: 2 minutes on stage. Show your logo, demo your website, and sell your vision.</p>
@@ -642,11 +645,10 @@
   <div class="slide">
     <span class="tag tag-purple"><span class="tag-dot"></span> Final Scores</span>
     <h2>The Scoreboard</h2>
-    <h3>Points from all three competitions combined</h3>
-    <div class="stat-grid">
-      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Logo</div><div class="desc">Best company name and logo design. Simplicity, memorability, brand fit.</div></div>
-      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Website</div><div class="desc">Best website design and content. Visual design, usability, creativity.</div></div>
-      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Pitch</div><div class="desc">Most compelling pitch. Storytelling, delivery, business viability.</div></div>
+    <h3>1st and 2nd place in each competition get chocolate!</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:700px; margin-top:1.5rem;">
+      <div class="stat-box" style="border-color:#3B82F6; border-width:2px;"><div class="num" style="color:#3B82F6;">Competition 1</div><div class="desc">Best company name and logo design. Simplicity, memorability, brand fit.</div></div>
+      <div class="stat-box" style="border-color:#3B82F6; border-width:2px;"><div class="num" style="color:#3B82F6;">Competition 2</div><div class="desc">Best website + most compelling pitch. Design, usability, storytelling, delivery.</div></div>
     </div>
   </div>
 
@@ -661,6 +663,40 @@
       <div class="tool-item"><div class="tool-name">A Pitch</div><div class="tool-desc">A compelling 2-minute presentation of your vision</div></div>
       <div class="tool-item"><div class="tool-name">Prompt Engineering</div><div class="tool-desc">The T.C.R.E.I. framework for any AI tool</div></div>
       <div class="tool-item"><div class="tool-name">Teamwork</div><div class="tool-desc">Collaboration under time pressure</div></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> What's Next?</span>
+    <h2>Next Steps After Today</h2>
+    <h3>You've built a prototype. Here's how to take it further.</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:920px; margin-top:0.5rem; text-align:left;">
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Go Live for Real</h3>
+        <ul>
+          <li><strong>Ask AI to generate a prompt</strong> based on your site to feed into Lovable</li>
+          <li><strong>Connect Stripe</strong> to accept credit card payments</li>
+          <li><strong>Or connect Shopify</strong> for a full e-commerce backend</li>
+          <li><strong>Get a custom domain</strong> for a professional look</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Market Your Product</h3>
+        <ul>
+          <li><strong>Social media</strong> - create videos, run ads</li>
+          <li><strong>Platforms</strong> - list on Ricardo.ch, marketplace sites</li>
+          <li><strong>SEO</strong> - blog posts, Google keywords</li>
+          <li><strong>Word of mouth</strong> - start with friends and family</li>
+        </ul>
+      </div>
+    </div>
+    <div class="safety-box" style="margin-top:1.25rem; max-width:920px;">
+      <h3 style="font-size:1rem;">Starting to earn money?</h3>
+      <ul>
+        <li>Talk to your parents about your plans</li>
+        <li>The <strong>tax office (Steueramt) is very friendly</strong> and can help you figure out what you need - don't let it be a deterrent!</li>
+        <li>Starting and launching is what matters - the admin side is simpler than you think</li>
+      </ul>
     </div>
   </div>
 
@@ -683,7 +719,7 @@
 </div>
 
 <div class="nav">
-  <span class="counter" id="counter">1 / 35</span>
+  <span class="counter" id="counter">1 / 36</span>
   <button onclick="go(-1)" id="prevBtn">&larr;</button>
   <button onclick="go(1)" id="nextBtn">&rarr;</button>
 </div>
@@ -700,7 +736,7 @@ function show(n) {
   document.getElementById('nextBtn').disabled = idx === total - 1;
   document.getElementById('progress').style.width = `${((idx + 1) / total) * 100}%`;
   const current = slides[idx];
-  const isDark = current.classList.contains('bg-dark') || current.classList.contains('bg-footer') || current.classList.contains('bg-competition');
+  const isDark = current.classList.contains('bg-dark') || current.classList.contains('bg-footer') || current.classList.contains('bg-competition') || current.classList.contains('bg-judging');
   document.querySelectorAll('.nav button').forEach(b => {
     b.style.background = isDark ? 'rgba(255,255,255,0.1)' : '';
     b.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : '';
