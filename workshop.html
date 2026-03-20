@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="images/icon.svg">
+<title>Informatiktage: Build and Launch an Online Webshop | Hebbian</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green-700: #146349; --green-600: #1B8460; --green-500: #22A577;
+    --green-400: #33BF8F; --green-100: #CCEFE3; --green-50: #E6F7F1;
+    --heading: #0B0B2C; --body: #69697B; --muted: #94A3B8;
+    --bg: #FFFFFF; --bg-alt: #F8FAFC;
+    --slate-100: #F1F5F9; --slate-200: #E2E8F0; --slate-700: #334155;
+    --footer-bg: #020617; --red-500: #EF4444; --amber-500: #F59E0B;
+    --purple-500: #8B5CF6; --purple-50: #F5F3FF; --purple-100: #EDE9FE;
+    --radius: 16px;
+  }
+  body { font-family: 'Questrial', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--body); overflow: hidden; height: 100vh; width: 100vw; }
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    flex-direction: column; justify-content: center; align-items: center;
+    padding: 4rem 6rem; text-align: center; background: var(--bg); overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide.bg-alt { background: var(--bg-alt); }
+  .slide.bg-dark { background: linear-gradient(135deg, var(--green-600), var(--green-700)); color: #fff; }
+  .slide.bg-dark h1, .slide.bg-dark h2, .slide.bg-dark h3 { color: #fff; }
+  .slide.bg-dark p, .slide.bg-dark li { color: rgba(255,255,255,0.85); }
+  .slide.bg-footer { background: var(--footer-bg); color: #fff; }
+  .slide.bg-footer h1, .slide.bg-footer h2 { color: #fff; }
+  .slide.bg-footer p { color: var(--muted); }
+  .slide.bg-competition { background: linear-gradient(135deg, #7C3AED, #8B5CF6); color: #fff; }
+  .slide.bg-competition h1, .slide.bg-competition h2, .slide.bg-competition h3 { color: #fff; }
+  .slide.bg-competition p, .slide.bg-competition li { color: rgba(255,255,255,0.85); }
+
+  .slide::before { content: ''; position: absolute; top: -15%; right: -8%; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(34,165,119,0.05) 0%, transparent 70%); pointer-events: none; }
+  .slide::after { content: ''; position: absolute; bottom: -15%; left: -8%; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(34,165,119,0.04) 0%, transparent 70%); pointer-events: none; }
+
+  h1 { font-size: 3.2rem; font-weight: 700; line-height: 1.15; color: var(--heading); letter-spacing: -0.03em; margin-bottom: 1rem; }
+  h2 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; color: var(--heading); letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  h3 { font-size: 1.15rem; font-weight: 400; color: var(--body); line-height: 1.6; margin-bottom: 1.5rem; max-width: 700px; }
+  p { font-size: 1.15rem; line-height: 1.65; }
+  strong { color: var(--heading); }
+  .grad-text { background: linear-gradient(to right, var(--green-500), var(--green-400), var(--green-600)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .tag { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.9rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem; }
+  .tag-green { background: var(--green-50); color: var(--green-500); }
+  .tag-amber { background: #FEF3C7; color: #B45309; }
+  .tag-white { background: rgba(255,255,255,0.15); color: #fff; }
+  .tag-purple { background: var(--purple-50); color: var(--purple-500); }
+  .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  ul { list-style: none; text-align: left; }
+  ul li { padding: 0.45rem 0 0.45rem 1.6rem; position: relative; font-size: 1.1rem; line-height: 1.6; }
+  ul li::before { content: ''; position: absolute; left: 0; top: 0.85rem; width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); }
+
+  .bio-card { background: var(--bg); border: 1px solid var(--slate-200); border-radius: 24px; padding: 2rem 2.5rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .bio-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 0.25rem; }
+  .bio-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--slate-200); flex-shrink: 0; }
+  .bio-card h2 { font-size: 1.5rem; margin-bottom: 0.15rem; }
+  .bio-card .role { color: var(--green-500); font-size: 0.95rem; margin-bottom: 0.25rem; }
+  .bio-card .sub-role { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+  .bio-card ul li { font-size: 0.95rem; padding: 0.25rem 0 0.25rem 1.4rem; }
+  .bio-card ul li::before { top: 0.65rem; width: 6px; height: 6px; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 920px; margin-top: 1.5rem; }
+  .stat-box { background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 1.75rem 1.5rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .stat-box .num { font-size: 2.8rem; font-weight: 700; color: var(--green-500); letter-spacing: -0.03em; }
+  .stat-box .desc { font-size: 0.92rem; color: var(--body); margin-top: 0.4rem; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 920px; text-align: left; }
+  .col-card { background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .col-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 0.75rem; max-width: none; }
+  .col-card ul li { font-size: 0.95rem; padding: 0.25rem 0 0.25rem 1.4rem; }
+  .col-card ul li::before { top: 0.6rem; width: 5px; height: 5px; }
+
+  .safety-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: var(--radius); padding: 2rem 2.5rem; max-width: 800px; text-align: left; }
+  .safety-box h3 { color: #B45309; font-weight: 700; margin-bottom: 1rem; max-width: none; }
+  .safety-box ul li::before { background: #F59E0B; }
+  .safety-box ul li { font-size: 1rem; }
+
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 880px; margin-top: 1rem; }
+  .tool-item { background: var(--bg); border: 1px solid var(--slate-200); border-radius: 12px; padding: 1.25rem 1rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .tool-item .tool-name { font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.25rem; }
+  .tool-item .tool-desc { font-size: 0.82rem; color: var(--body); line-height: 1.5; }
+
+  .framework-list { max-width: 720px; text-align: left; counter-reset: step; margin-top: 0.5rem; }
+  .framework-list li { padding: 0.75rem 0 0.75rem 3rem; font-size: 1.05rem; position: relative; border-bottom: 1px solid var(--slate-100); }
+  .framework-list li:last-child { border-bottom: none; }
+  .framework-list li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0.65rem; width: 30px; height: 30px; border-radius: 50%; background: var(--green-50); color: var(--green-500); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; align-items: center; text-align: left; }
+  .img-rounded { border-radius: 12px; border: 1px solid var(--slate-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-caption { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+  .logo-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 900px; margin-top: 1rem; }
+  .logo-gallery-item { background: var(--bg); border: 1px solid var(--slate-200); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; }
+  .logo-gallery-item img { width: 100%; height: 140px; object-fit: contain; background: #f8f8f8; padding: 0.5rem; }
+  .logo-gallery-item .logo-credit { font-size: 0.72rem; color: var(--muted); padding: 0.4rem 0.5rem; text-align: center; border-top: 1px solid var(--slate-100); width: 100%; }
+
+  .timer-banner { display: inline-flex; align-items: center; gap: 0.75rem; background: var(--purple-50); border: 1px solid var(--purple-100); border-radius: 12px; padding: 0.75rem 1.5rem; margin-top: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--purple-500); }
+  .timer-banner .timer-icon { font-size: 1.4rem; }
+
+  .schedule-grid { display: grid; grid-template-columns: auto 1fr auto; gap: 0.5rem 1.5rem; max-width: 750px; text-align: left; margin-top: 1rem; }
+  .schedule-grid .time { font-weight: 700; color: var(--heading); font-size: 0.95rem; white-space: nowrap; }
+  .schedule-grid .activity { font-size: 0.95rem; color: var(--body); }
+  .schedule-grid .duration { font-size: 0.85rem; color: var(--muted); text-align: right; }
+
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--green-500), var(--green-400)); transition: width 0.3s ease; z-index: 100; }
+  .nav { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; align-items: center; gap: 0.6rem; z-index: 100; }
+  .nav button { width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--slate-200); background: var(--bg); color: var(--slate-700); font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .nav button:hover { background: var(--green-500); color: #fff; border-color: var(--green-500); }
+  .nav button:disabled { opacity: 0.25; cursor: not-allowed; }
+  .nav .counter { font-size: 0.78rem; color: var(--muted); font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .slide { padding: 2rem 1.5rem; } h1 { font-size: 2.2rem; } h2 { font-size: 1.6rem; }
+    .stat-grid, .two-col, .tool-grid, .logo-gallery, .split-layout { grid-template-columns: 1fr; }
+    .schedule-grid { grid-template-columns: auto 1fr; }
+    .schedule-grid .duration { display: none; }
+  }
+  @media print {
+    body { overflow: visible; height: auto; }
+    .slide { position: relative !important; display: flex !important; page-break-after: always; height: auto; min-height: 100vh; }
+    .nav, .progress { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+  <!-- ══════ PART 1: WELCOME (10 min) ═════ -->
+
+  <div class="slide active">
+    <span class="tag tag-green"><span class="tag-dot"></span> Informatiktage &middot; Hebbian</span>
+    <h1><span class="grad-text">Build and Launch an Online Webshop</span></h1>
+    <h3>Build a startup from scratch in under two hours - from idea to pitch, powered by AI</h3>
+    <p style="color:var(--muted); font-size:0.95rem; margin-top:1.5rem;">Cameron Weibel &middot; Hebbian</p>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Meet Your Presenter</span>
+    <div class="bio-card">
+      <div class="bio-header">
+        <img class="bio-photo" src="images/cameron-weibel.png" alt="Cameron Weibel">
+        <div>
+          <h2>Cameron Weibel</h2>
+          <div class="role">Co-Founder, Hebbian &middot; Manager of AI, SWISS International Air Lines</div>
+        </div>
+      </div>
+      <div class="sub-role">MSc Robotics, Systems &amp; Control (Machine Learning), ETH Zurich, ZIS alum</div>
+      <ul>
+        <li>Co-founded Hebbian: STEM and AI education for young people, including workshops, courses, and summer programs</li>
+        <li>Manager of AI at Swiss International Air Lines, connecting schools to industry</li>
+        <li>Partnership with ETH Computer Science Department, running the annual AI Summer Week for students aged 13-18</li>
+        <li>Builds AI-powered educational tools for students, teachers, and faculty</li>
+        <li>Founder of Shipped, Zurich&rsquo;s highest-rated (4.8/5) entrepreneurship Meetup with 1600+ members</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Today&rsquo;s Mission</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">Build a Startup in 1h50m</h1>
+    <p style="max-width:650px; margin-top:0.5rem; font-size:1.1rem;">Every team will have a company name, logo, live website, and a pitch. Three competitions along the way - with prizes. One of our goals today is to give you hands-on access to a range of AI tools you can keep using after the workshop.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:700px; margin-top:1.5rem;">
+      <div><img src="images/monday_slide5_img1.png" alt="ETH auditorium" class="img-rounded" style="width:100%; border-color:rgba(255,255,255,0.15);"><p class="img-caption" style="color:rgba(255,255,255,0.5);">Past pitch day at ETH</p></div>
+      <div><img src="images/monday_slide6_img4.jpg" alt="Winners" class="img-rounded" style="width:100%; border-color:rgba(255,255,255,0.15);"><p class="img-caption" style="color:rgba(255,255,255,0.5);">Winners with their prizes</p></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Overview</span>
+    <h2>Workshop Schedule</h2>
+    <h3>1 hour 50 minutes, 3 competitions, 1 winning team</h3>
+    <div class="schedule-grid">
+      <div class="time">0:00</div><div class="activity">Welcome &amp; introductions</div><div class="duration">10 min</div>
+      <div class="time">0:10</div><div class="activity">AI &amp; Prompt Engineering crash course</div><div class="duration">10 min</div>
+      <div class="time" style="color:var(--purple-500);">0:20</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 1: Name &amp; Logo</div><div class="duration" style="color:var(--purple-500);">25 min</div>
+      <div class="time">0:45</div><div class="activity">Logo judging &amp; voting</div><div class="duration">5 min</div>
+      <div class="time" style="color:var(--purple-500);">0:50</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 2: Website Build</div><div class="duration" style="color:var(--purple-500);">30 min</div>
+      <div class="time">1:20</div><div class="activity">Website judging</div><div class="duration">5 min</div>
+      <div class="time" style="color:var(--purple-500);">1:25</div><div class="activity" style="color:var(--purple-500); font-weight:700;">Competition 3: The Pitch</div><div class="duration" style="color:var(--purple-500);">15 min</div>
+      <div class="time">1:40</div><div class="activity">Pitch presentations &amp; judging</div><div class="duration">8 min</div>
+      <div class="time">1:48</div><div class="activity">Awards &amp; wrap-up</div><div class="duration">2 min</div>
+    </div>
+  </div>
+
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Let&rsquo;s Go</span>
+    <h1 style="font-size:2.8rem;">Form Your Teams</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Groups of 1-3. You need a mix of creativity, tech, and storytelling.</p>
+    <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 2 minutes to form teams</div>
+  </div>
+
+  <!-- ══ WHAT WE'RE BUILDING TOWARDS ══ -->
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> The Full Picture</span>
+    <h2>Lovable + Shopify Integration</h2>
+    <h3>You can go all the way - process credit card payments, manage inventory, handle shipping. Today we focus on the creative side: prompting well, logo, products, and design.</h3>
+    <img src="images/lovable-and-shopify.png" alt="Lovable and Shopify integration" class="img-rounded" style="max-width:700px; width:100%; margin-top:0.5rem;">
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Live Example</span>
+    <h2>What You Can Build</h2>
+    <h3>This entire store was built with Lovable - live and functional right now</h3>
+    <a href="https://bellabeauty-shop.lovable.app/" target="_blank" style="display:block; max-width:700px; width:100%; margin-top:0.5rem;">
+      <img src="images/bella-beauty.png" alt="Bella Beauty shop" class="img-rounded" style="width:100%;">
+    </a>
+    <a href="https://bellabeauty-shop.lovable.app/" target="_blank" style="font-size:1.1rem; font-weight:700; color:var(--green-500); text-decoration:none; margin-top:0.75rem; display:inline-block; border-bottom:2px solid var(--green-500);">bellabeauty-shop.lovable.app</a>
+  </div>
+
+  <!-- ══ PART 2: AI CRASH COURSE (10 min) ═ -->
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Foundations</span>
+    <h2>What Is AI?</h2>
+    <div class="split-layout" style="margin-top:0.5rem;">
+      <div><ul><li>AI systems learn from data and adapt over time</li><li>They use algorithms to recognize patterns</li><li>Different models excel at different tasks</li><li>New models are released every month</li></ul></div>
+      <div><img src="images/monday_slide11_img1.png" alt="AI models" class="img-rounded" style="width:100%;"><p class="img-caption">AI models compared by intelligence, speed &amp; price</p></div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Key Skill</span>
+    <h2>The T.C.R.E.I. Prompt Framework</h2>
+    <div class="split-layout" style="margin-top:0.5rem;">
+      <div><img src="images/prompt_engineering_crash_course_slide4_img0.png" alt="T.C.R.E.I." class="img-rounded" style="width:100%;"></div>
+      <div><ul class="framework-list" style="margin-top:0;">
+        <li><strong>Task.</strong> What do you want? Be specific. Add a persona.</li>
+        <li><strong>Context.</strong> Background info the AI needs.</li>
+        <li><strong>References.</strong> Examples of what you like.</li>
+        <li><strong>Evaluate.</strong> Check the output critically.</li>
+        <li><strong>Iterate.</strong> Refine. Prompting is a conversation.</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Examples</span>
+    <h2>Prompting in Practice</h2>
+    <h3>See how persona, task, context, and references come together</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:1200px; width:100%; margin-top:0.5rem;">
+      <div><img src="images/prompt_engineering_crash_course_slide5_img1.png" alt="Persona" class="img-rounded" style="width:100%;"><p class="img-caption">Adding a persona to guide the output</p></div>
+      <div><img src="images/prompt_engineering_crash_course_slide9_img3.png" alt="Multimodal" class="img-rounded" style="width:100%;"><p class="img-caption">Multimodal: text + images + references</p></div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Pro Tip</span>
+    <h2>Ask AI to Help You Prompt</h2>
+    <h3>Don't know how to write a good prompt? Ask the AI to write one for you.</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; max-width:960px; margin-top:0.5rem; align-items:start;">
+      <div>
+        <div style="background:var(--slate-100); border-radius:8px; padding:1rem 1.25rem;">
+          <p style="font-size:0.85rem; color:var(--heading); font-weight:700; margin-bottom:0.5rem;">Your prompt to Gemini:</p>
+          <p style="font-size:1rem; font-style:italic; color:var(--body); line-height:1.5;">&ldquo;Come up with a great prompt to generate a logo for MowMakers&rdquo;</p>
+        </div>
+      </div>
+      <div>
+        <div style="background:var(--green-50); border-radius:8px; padding:1rem 1.25rem;">
+          <p style="font-size:0.85rem; color:var(--green-600); font-weight:700; margin-bottom:0.5rem;">Gemini's output:</p>
+          <p style="font-size:0.8rem; font-style:italic; color:var(--body); line-height:1.4;">&ldquo;You are a professional logo designer. Create a logo for a lawn care company called MowMakers. The logo features a bold, friendly wordmark with a stylized lawn mower icon integrated into the lettering or placed above the text. The mower leaves a trail of neat, geometric grass stripes behind it, suggesting precision and craftsmanship. Color palette: deep forest green and crisp white with a warm yellow accent. Flat vector illustration style - minimal, professional, and versatile. No gradients, no drop shadows. Suitable for hats, shirts, and business cards. White background.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.95rem; color:var(--body); margin-top:1rem; max-width:700px;">Then take that prompt and paste it into Gemini's image generator, Playground, Firefly, or any other tool. <strong>Use AI to prompt AI.</strong></p>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-amber"><span class="tag-dot"></span> Important</span>
+    <h2>AI Safety &amp; Ethics</h2>
+    <h3>Quick rules before we start building</h3>
+    <div class="safety-box"><h3>When Using AI Today</h3><ul>
+      <li><strong>Review all AI output</strong> before using it -AI makes mistakes</li>
+      <li><strong>Never input personal data</strong> or private information</li>
+      <li><strong>Disclose AI use</strong> -be transparent about what AI helped with</li>
+      <li><strong>AI generates the scaffold;</strong> you create the work</li>
+    </ul></div>
+  </div>
+
+  <!-- ══ COMPETITION 1: NAME & LOGO (25 min) ══ -->
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 1 of 3</span>
+    <h1 style="font-size:2.8rem;">Name &amp; Logo</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Brainstorm a business idea, choose a name, and design a logo. Best logo wins.</p>
+    <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 25 minutes</div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Step 1</span>
+    <h2>Brainstorm Your Business Idea</h2>
+    <h3>Use AI to generate ideas, then pick the one your team is most excited about</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card"><h3>Prompt: Problem Solver</h3><p style="font-size:0.9rem; font-style:italic; line-height:1.5;">&ldquo;Act as a high school student. Brainstorm 5 common, annoying problems you face at school. For each, suggest a simple tech idea that could solve it. Present in a table.&rdquo;</p></div>
+      <div class="col-card"><h3>Prompt: Trend Spotter</h3><p style="font-size:0.9rem; font-style:italic; line-height:1.5;">&ldquo;Act as a trend forecaster for Gen Z. Based on sustainable fashion and retro gaming, generate 3 unique business ideas combining these trends.&rdquo;</p></div>
+    </div>
+    <div class="timer-banner"><span class="timer-icon">&#9202;</span> 5 minutes -pick your idea</div>
+  </div>
+
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Let's Brainstorm</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">What makes a good logo?</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Think of a logo you love. What makes it stick in your mind? Let's whiteboard your ideas.</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:700px; margin-top:2rem;">
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#127912;</div>
+        <div style="font-size:1rem; font-weight:700;">Design</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">What should it look like?</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#129504;</div>
+        <div style="font-size:1rem; font-weight:700;">Psychology</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">What should it make you feel?</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#128736;</div>
+        <div style="font-size:1rem; font-weight:700;">Practical</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">Where does it need to work?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Key Takeaways</span>
+    <h2>What Makes a Good Logo</h2>
+    <h3>Here's what the best logos have in common</h3>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:900px; margin-top:0.5rem;">
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Design</h3>
+        <ul>
+          <li><strong>Simple</strong> - works at any size, even tiny</li>
+          <li><strong>Limited palette</strong> - 2-3 colors max</li>
+          <li><strong>Clean typography</strong> - readable at a glance</li>
+          <li><strong>Unique shape</strong> - not generic clipart</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Psychology</h3>
+        <ul>
+          <li><strong>Memorable</strong> - you can draw it from memory</li>
+          <li><strong>Evokes emotion</strong> - trust, energy, fun</li>
+          <li><strong>Tells a story</strong> - hints at what you do</li>
+          <li><strong>Consistent</strong> - matches your brand tone</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Practical</h3>
+        <ul>
+          <li><strong>Works on light and dark</strong> backgrounds</li>
+          <li><strong>Scales</strong> - favicon to billboard</li>
+          <li><strong>Printable</strong> - hats, shirts, cards</li>
+          <li><strong>No gradients</strong> - flat vector is safest</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Step 2</span>
+    <h2>What Makes a Good Logo?</h2>
+    <h3>Simple, memorable, and tells your story at a glance</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card"><h3>Principles</h3><ul>
+        <li><strong>Simple:</strong> Works from favicon to billboard</li>
+        <li><strong>Memorable:</strong> Can you draw it from memory?</li>
+        <li><strong>Relevant:</strong> Reflects your product or values</li>
+        <li><strong>Versatile:</strong> Light &amp; dark backgrounds</li>
+      </ul></div>
+      <div class="col-card"><h3>Common Mistakes</h3><ul>
+        <li><strong>Too complex:</strong> Tiny details vanish at small sizes</li>
+        <li><strong>Too many colors:</strong> Stick to 2-3 max</li>
+        <li><strong>Unreadable fonts:</strong> If they can&rsquo;t read it, they can&rsquo;t find you</li>
+        <li><strong>Generic clipart:</strong> Curate &amp; customize AI output</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Inspiration</span>
+    <h2>Logos from Past Students</h2>
+    <h3>All created in a single afternoon with AI tools + manual refinement</h3>
+    <div class="logo-gallery">
+      <div class="logo-gallery-item"><img src="images/logos/AIStartUP - Mateo Wieghardt.png" alt="AI Tutor"><div class="logo-credit">Mateo W. -AI Tutor</div></div>
+      <div class="logo-gallery-item"><img src="images/logos/Looman w_name - Alec Fairfield.png" alt="Looman"><div class="logo-credit">Alec F. -Looman</div></div>
+      <div class="logo-gallery-item"><img src="images/logos/nexagroup5.jpg - Luca Vallisneri.png" alt="Nexa"><div class="logo-credit">Luca V. -Nexa</div></div>
+      <div class="logo-gallery-item"><img src="images/logos/coconut . - Aimilia Konstantopoulou.png" alt="Be Vogue"><div class="logo-credit">Aimilia K. -Be Vogue</div></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Prompting Matters</span>
+    <h2>How to Prompt for a Good Logo</h2>
+    <h3>The difference between a lazy prompt and a detailed one is night and day</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; max-width:960px; margin-top:0.5rem; align-items:start;">
+      <div style="text-align:center;">
+        <img src="images/mowmakers-1.png" alt="Bad prompt logo" class="img-rounded" style="width:100%;">
+        <div style="background:var(--slate-100); border-radius:8px; padding:0.75rem 1rem; margin-top:0.75rem; text-align:left;">
+          <p style="font-size:0.85rem; color:var(--red-500); font-weight:700; margin-bottom:0.25rem;">The prompt:</p>
+          <p style="font-size:0.9rem; font-style:italic; color:var(--body); line-height:1.4;">&ldquo;mowmakers logo&rdquo;</p>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <img src="images/mowmakers-2.png" alt="Good prompt logo" class="img-rounded" style="width:100%;">
+        <div style="background:var(--green-50); border-radius:8px; padding:0.75rem 1rem; margin-top:0.75rem; text-align:left;">
+          <p style="font-size:0.85rem; color:var(--green-600); font-weight:700; margin-bottom:0.25rem;">The prompt:</p>
+          <p style="font-size:0.8rem; font-style:italic; color:var(--body); line-height:1.4;">&ldquo;You are a professional logo designer. Create a logo for a lawn care company called MowMakers. The logo features a bold, friendly wordmark with a stylized lawn mower icon integrated into the lettering or placed above the text. The mower leaves a trail of neat, geometric grass stripes behind it, suggesting precision and craftsmanship. Color palette: deep forest green and crisp white with a warm yellow accent. Flat vector illustration style - minimal, professional, and versatile. No gradients, no drop shadows. Suitable for hats, shirts, and business cards. White background.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Build It</span>
+    <h2>Create Your Name &amp; Logo</h2>
+    <h3>Use <strong style="color:var(--heading);">Gemini</strong> as your main tool for generating names and logo images - it has the best free tier. These are great alternatives:</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; max-width:960px; margin-top:0.5rem;">
+      <div style="text-align:center;">
+        <a href="https://namelix.com" target="_blank"><img src="images/monday_slide33_img2.png" alt="Namelix" class="img-rounded" style="width:100%;"></a>
+        <p class="img-caption"><a href="https://namelix.com" target="_blank" style="color:var(--green-500); text-decoration:none; font-weight:700;">namelix.com</a> - name generation &amp; simple logos</p>
+      </div>
+      <div style="text-align:center;">
+        <a href="https://playground.com/design/c/logo" target="_blank"><img src="images/monday_slide37_img1.png" alt="Playground" class="img-rounded" style="width:100%;"></a>
+        <p class="img-caption"><a href="https://playground.com/design/c/logo" target="_blank" style="color:var(--green-500); text-decoration:none; font-weight:700;">playground.com</a> - logo design</p>
+      </div>
+      <div style="text-align:center;">
+        <a href="https://firefly.adobe.com/" target="_blank"><img src="images/monday_slide39_img2.png" alt="Firefly" class="img-rounded" style="width:100%;"></a>
+        <p class="img-caption"><a href="https://firefly.adobe.com/" target="_blank" style="color:var(--green-500); text-decoration:none; font-weight:700;">firefly.adobe.com</a> - logo design</p>
+      </div>
+    </div>
+    <p style="font-size:0.9rem; color:var(--muted); margin-top:0.75rem;">Also works: ChatGPT (if you have Plus) or any other image generation tool you have access to</p>
+    <div class="timer-banner"><span class="timer-icon">&#9202;</span> 20 minutes remaining - GO!</div>
+  </div>
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Judging Time</span>
+    <h1 style="font-size:2.6rem;">Logo Competition</h1>
+    <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">Each team: 30 seconds to present your company name and logo. Then we vote!</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:700px; margin-top:1.5rem;">
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">Simple</div><div style="font-size:0.85rem; opacity:0.8;">Works at any size?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">Memorable</div><div style="font-size:0.85rem; opacity:0.8;">Stands out?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">On-Brand</div><div style="font-size:0.85rem; opacity:0.8;">Matches the business?</div></div>
+    </div>
+  </div>
+
+  <!-- ══ BRAINSTORM: WEBSITES ══ -->
+
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Let's Brainstorm</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">What makes a great webshop?</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Think of the last online store where you bought something. What made you trust it? What made you click "buy"?</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:700px; margin-top:2rem;">
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#128065;</div>
+        <div style="font-size:1rem; font-weight:700;">First Impression</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">What catches your eye?</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#128274;</div>
+        <div style="font-size:1rem; font-weight:700;">Trust</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">What makes you feel safe?</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.3); border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#128722;</div>
+        <div style="font-size:1rem; font-weight:700;">Conversion</div>
+        <div style="font-size:0.85rem; opacity:0.7; margin-top:0.25rem;">What makes you click buy?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Key Takeaways</span>
+    <h2>What Makes a Great Webshop</h2>
+    <h3>The ingredients that turn visitors into customers</h3>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:900px; margin-top:0.5rem;">
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">First Impression</h3>
+        <ul>
+          <li><strong>Hero image</strong> - high quality, shows the product</li>
+          <li><strong>Clear headline</strong> - what you sell in 5 words</li>
+          <li><strong>Professional look</strong> - consistent colors and fonts</li>
+          <li><strong>Fast load</strong> - slow = gone</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Trust</h3>
+        <ul>
+          <li><strong>Reviews</strong> - social proof from real people</li>
+          <li><strong>About page</strong> - who's behind it?</li>
+          <li><strong>Contact info</strong> - reachable = trustworthy</li>
+          <li><strong>Secure checkout</strong> - SSL, known payment methods</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3 style="color:var(--green-600);">Conversion</h3>
+        <ul>
+          <li><strong>Clear CTA</strong> - one obvious button</li>
+          <li><strong>Simple checkout</strong> - fewer steps = more sales</li>
+          <li><strong>Pricing visible</strong> - no surprises</li>
+          <li><strong>Mobile friendly</strong> - most shoppers are on phones</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ COMPETITION 2: WEBSITE BUILD (30 min) ══ -->
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 2 of 3</span>
+    <h1 style="font-size:2.8rem;">Website Build</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Build a live website for your startup using AI. Best design wins.</p>
+    <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 30 minutes</div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Choose Your Tool</span>
+    <h2>Three Ways to Build</h2>
+    <h3>Start with Claude to prototype for free, then move to Lovable or connect Shopify/Stripe when you're ready to go live</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; max-width:1000px; margin-top:0.5rem;">
+      <div class="col-card" style="text-align:center;">
+        <img src="images/tuesday_slide11_img1.jpg" alt="Shopify" class="img-rounded" style="width:100%; margin-bottom:1rem;">
+        <h3>Shopify</h3>
+        <ul>
+          <li>Professional store in under an hour</li>
+          <li>Pre-built themes, drag &amp; drop</li>
+          <li>Connect later for payments &amp; shipping</li>
+        </ul>
+      </div>
+      <div class="col-card" style="text-align:center;">
+        <img src="images/tuesday_slide14_img4.png" alt="Lovable" class="img-rounded" style="width:100%; max-width:200px; margin:0 auto 1rem;">
+        <h3>Lovable (AI Builder)</h3>
+        <ul>
+          <li>Type a prompt, get a full website</li>
+          <li>100% unique, full code output</li>
+          <li>Connect Stripe or Shopify later</li>
+        </ul>
+      </div>
+      <div class="col-card" style="text-align:center;">
+        <img src="images/claude-logo.svg" alt="Claude" style="width:100%; max-width:200px; margin:0 auto 1rem; border-radius:12px;">
+        <h3>Claude (Vibe Code)</h3>
+        <ul>
+          <li>Test designs and iterate for free</li>
+          <li>Perfect your prompt and layout</li>
+          <li>Then feed the optimized prompt into Lovable</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Design Tips</span>
+    <h2>Quick UI/UX Checklist</h2>
+    <h3>Hit these marks before you submit</h3>
+    <ul class="framework-list">
+      <li><strong>5-second test.</strong> Can someone understand your business in 5 seconds?</li>
+      <li><strong>Clear CTA.</strong> Big button: &ldquo;Shop Now&rdquo;, &ldquo;Get Started&rdquo;, &ldquo;Learn More&rdquo;</li>
+      <li><strong>Consistent branding.</strong> Same fonts, colors, and style everywhere</li>
+      <li><strong>Less is more.</strong> White space is your friend</li>
+      <li><strong>Mobile check.</strong> Resize your browser to test mobile layout</li>
+    </ul>
+    <div class="timer-banner"><span class="timer-icon">&#9202;</span> Keep building! Time is ticking.</div>
+  </div>
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Judging Time</span>
+    <h1 style="font-size:2.6rem;">Website Competition</h1>
+    <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">Each team: 1 minute to show your live website on the big screen!</p>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:800px; margin-top:1.5rem;">
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.3rem; font-weight:700;">Design</div><div style="font-size:0.8rem; opacity:0.8;">Visual polish?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.3rem; font-weight:700;">Usability</div><div style="font-size:0.8rem; opacity:0.8;">Easy to navigate?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.3rem; font-weight:700;">Content</div><div style="font-size:0.8rem; opacity:0.8;">Clear value prop?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.3rem; font-weight:700;">Creativity</div><div style="font-size:0.8rem; opacity:0.8;">Wow factor?</div></div>
+    </div>
+  </div>
+
+  <!-- ══ COMPETITION 3: THE PITCH (15 min) ══ -->
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Competition 3 of 3</span>
+    <h1 style="font-size:2.8rem;">The Pitch</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Prepare a 2-minute Shark Tank-style pitch. Most convincing team wins it all.</p>
+    <div class="timer-banner" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;"><span class="timer-icon">&#9202;</span> 15 minutes to prepare</div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Framework</span>
+    <h2>Your 2-Minute Pitch</h2>
+    <h3>Follow this structure -every second counts</h3>
+    <div class="split-layout">
+      <ul class="framework-list" style="margin-top:0;">
+        <li><strong>The Hook.</strong> Start with the problem. Make it relatable. (15s)</li>
+        <li><strong>Your Solution.</strong> What does your product do? (20s)</li>
+        <li><strong>Live Demo.</strong> Show the website on screen. (30s)</li>
+        <li><strong>Why You&rsquo;re Different.</strong> What&rsquo;s your edge? (20s)</li>
+        <li><strong>The Ask.</strong> What would you need to grow? (15s)</li>
+      </ul>
+      <div><img src="images/tuesday_slide5_img2.jpg" alt="Shark Tank" class="img-rounded" style="width:70%; margin:0 auto; display:block;"><p class="img-caption">Shark Tank-style presentation</p></div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Pro Tips</span>
+    <h2>Pitch Like a Pro</h2>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card"><h3>Do</h3><ul>
+        <li><strong>Tell a story.</strong> People remember stories, not features</li>
+        <li><strong>Show, don&rsquo;t tell.</strong> Demo your website live</li>
+        <li><strong>Know your numbers.</strong> Market size, target customer</li>
+        <li><strong>End with energy.</strong> Strong close, clear ask</li>
+      </ul></div>
+      <div class="col-card"><h3>Don&rsquo;t</h3><ul>
+        <li><strong>Read from notes.</strong> Know your pitch by heart</li>
+        <li><strong>Use jargon.</strong> Explain it like they&rsquo;re 12</li>
+        <li><strong>Go over time.</strong> 2 minutes means 2 minutes</li>
+        <li><strong>Forget the team.</strong> Mention who does what</li>
+      </ul></div>
+    </div>
+    <div class="timer-banner"><span class="timer-icon">&#9202;</span> Practice your pitch! Time is almost up.</div>
+  </div>
+
+  <div class="slide bg-competition">
+    <span class="tag tag-white"><span class="tag-dot"></span> Showtime</span>
+    <h1 style="font-size:2.8rem;">Pitch Presentations</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">Each team: 2 minutes on stage. Show your logo, demo your website, and sell your vision.</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:700px; margin-top:1.5rem;">
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">Story</div><div style="font-size:0.85rem; opacity:0.8;">Compelling narrative?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">Delivery</div><div style="font-size:0.85rem; opacity:0.8;">Confidence &amp; clarity?</div></div>
+      <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; text-align:center;"><div style="font-size:1.5rem; font-weight:700;">Business</div><div style="font-size:0.85rem; opacity:0.8;">Would you invest?</div></div>
+    </div>
+  </div>
+
+  <!-- ══ AWARDS & WRAP-UP ══ -->
+
+  <div class="slide">
+    <span class="tag tag-purple"><span class="tag-dot"></span> Final Scores</span>
+    <h2>The Scoreboard</h2>
+    <h3>Points from all three competitions combined</h3>
+    <div class="stat-grid">
+      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Logo</div><div class="desc">Best company name and logo design. Simplicity, memorability, brand fit.</div></div>
+      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Website</div><div class="desc">Best website design and content. Visual design, usability, creativity.</div></div>
+      <div class="stat-box" style="border-color:var(--purple-500); border-width:2px;"><div class="num" style="color:var(--purple-500);">Pitch</div><div class="desc">Most compelling pitch. Storytelling, delivery, business viability.</div></div>
+    </div>
+  </div>
+
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Congratulations</span>
+    <h2>Look What You Built in 1h50m</h2>
+    <h3>From zero to a fully functioning startup -in a single workshop</h3>
+    <div class="tool-grid">
+      <div class="tool-item"><div class="tool-name">A Business Idea</div><div class="tool-desc">Brainstormed, validated, and chosen by your team</div></div>
+      <div class="tool-item"><div class="tool-name">A Brand Identity</div><div class="tool-desc">Company name, logo, and color palette</div></div>
+      <div class="tool-item"><div class="tool-name">A Live Website</div><div class="tool-desc">Published and accessible to anyone on the internet</div></div>
+      <div class="tool-item"><div class="tool-name">A Pitch</div><div class="tool-desc">A compelling 2-minute presentation of your vision</div></div>
+      <div class="tool-item"><div class="tool-name">Prompt Engineering</div><div class="tool-desc">The T.C.R.E.I. framework for any AI tool</div></div>
+      <div class="tool-item"><div class="tool-name">Teamwork</div><div class="tool-desc">Collaboration under time pressure</div></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Learn More</span>
+    <h2>Hebbian</h2>
+    <h3>STEM and AI education for young people - workshops, courses, and summer programs</h3>
+    <a href="https://hebbian.ch" target="_blank" style="display:block; max-width:700px; width:100%; margin-top:0.5rem;">
+      <img src="images/hebbian-page.png" alt="Hebbian website" class="img-rounded" style="width:100%;">
+    </a>
+    <a href="https://hebbian.ch" target="_blank" style="font-size:1.1rem; font-weight:700; color:var(--green-500); text-decoration:none; margin-top:0.75rem; display:inline-block; border-bottom:2px solid var(--green-500);">hebbian.ch</a>
+  </div>
+
+  <div class="slide bg-footer">
+    <h1 style="font-size:2.8rem;">Thank You!</h1>
+    <p style="color:var(--muted); font-size:1.1rem; margin-top:1rem; max-width:600px;">You just built a startup from scratch in under two hours. Imagine what you can do with a whole week.</p>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:2rem;">Informatiktage &middot; Hebbian<br>Cameron Weibel</p>
+  </div>
+
+</div>
+
+<div class="nav">
+  <span class="counter" id="counter">1 / 35</span>
+  <button onclick="go(-1)" id="prevBtn">&larr;</button>
+  <button onclick="go(1)" id="nextBtn">&rarr;</button>
+</div>
+
+<script>
+let idx = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+function show(n) {
+  idx = Math.max(0, Math.min(total - 1, n));
+  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('counter').textContent = `${idx + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === total - 1;
+  document.getElementById('progress').style.width = `${((idx + 1) / total) * 100}%`;
+  const current = slides[idx];
+  const isDark = current.classList.contains('bg-dark') || current.classList.contains('bg-footer') || current.classList.contains('bg-competition');
+  document.querySelectorAll('.nav button').forEach(b => {
+    b.style.background = isDark ? 'rgba(255,255,255,0.1)' : '';
+    b.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : '';
+    b.style.color = isDark ? '#fff' : '';
+  });
+  document.querySelector('.nav .counter').style.color = isDark ? 'rgba(255,255,255,0.4)' : '';
+}
+function go(dir) { show(idx + dir); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  else if (e.key === 'ArrowLeft') go(-1);
+  else if (e.key === 'Home') show(0);
+  else if (e.key === 'End') show(total - 1);
+});
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) go(diff > 0 ? 1 : -1);
+});
+show(0);
+
+function launchConfetti() {
+  const colors = ['#22A577','#33BF8F','#8B5CF6','#F59E0B','#EF4444','#3B82F6','#EC4899'];
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const pieces = [];
+  for (let i = 0; i < 150; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: Math.random() * 4 - 2,
+      vy: Math.random() * 4 + 3,
+      rot: Math.random() * 360,
+      rv: Math.random() * 10 - 5
+    });
+  }
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.rv; p.vy += 0.05;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color; ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 180) requestAnimationFrame(draw);
+    else document.body.removeChild(canvas);
+  }
+  draw();
+}
+</script>
+</body>
+</html>

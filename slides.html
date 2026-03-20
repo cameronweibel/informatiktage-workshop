@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="images/icon.svg">
+<title>ZIS x ETH: Tech Entrepreneurship | August 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-700: #146349;
+    --green-600: #1B8460;
+    --green-500: #22A577;
+    --green-400: #33BF8F;
+    --green-100: #CCEFE3;
+    --green-50:  #E6F7F1;
+    --heading:   #0B0B2C;
+    --body:      #69697B;
+    --muted:     #94A3B8;
+    --bg:        #FFFFFF;
+    --bg-alt:    #F8FAFC;
+    --slate-100: #F1F5F9;
+    --slate-200: #E2E8F0;
+    --slate-700: #334155;
+    --footer-bg: #020617;
+    --red-500:   #EF4444;
+    --amber-500: #F59E0B;
+    --radius:    16px;
+  }
+
+  body {
+    font-family: 'Questrial', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--body);
+    overflow: hidden; height: 100vh; width: 100vw;
+  }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    flex-direction: column; justify-content: center; align-items: center;
+    padding: 4rem 6rem; text-align: center; background: var(--bg);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide.bg-alt { background: var(--bg-alt); }
+  .slide.bg-dark {
+    background: linear-gradient(135deg, var(--green-600), var(--green-700));
+    color: #fff;
+  }
+  .slide.bg-dark h1, .slide.bg-dark h2, .slide.bg-dark h3 { color: #fff; }
+  .slide.bg-dark p, .slide.bg-dark li { color: rgba(255,255,255,0.85); }
+  .slide.bg-footer { background: var(--footer-bg); color: #fff; }
+  .slide.bg-footer h1, .slide.bg-footer h2 { color: #fff; }
+  .slide.bg-footer p { color: var(--muted); }
+
+  .slide::before {
+    content: ''; position: absolute; top: -15%; right: -8%;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,165,119,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .slide::after {
+    content: ''; position: absolute; bottom: -15%; left: -8%;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,165,119,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  h1 { font-size: 3.2rem; font-weight: 700; line-height: 1.15; color: var(--heading); letter-spacing: -0.03em; margin-bottom: 1rem; }
+  h2 { font-size: 2.4rem; font-weight: 700; line-height: 1.2; color: var(--heading); letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  h3 { font-size: 1.15rem; font-weight: 400; color: var(--body); line-height: 1.6; margin-bottom: 1.5rem; max-width: 700px; }
+  p { font-size: 1.15rem; line-height: 1.65; }
+  strong { color: var(--heading); }
+
+  .grad-text {
+    background: linear-gradient(to right, var(--green-500), var(--green-400), var(--green-600));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tag {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.9rem; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 1.25rem;
+  }
+  .tag-green { background: var(--green-50); color: var(--green-500); }
+  .tag-amber { background: #FEF3C7; color: #B45309; }
+  .tag-red { background: #FEF2F2; color: var(--red-500); }
+  .tag-slate { background: var(--slate-100); color: var(--slate-700); }
+  .tag-white { background: rgba(255,255,255,0.15); color: #fff; }
+  .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  ul { list-style: none; text-align: left; }
+  ul li { padding: 0.45rem 0 0.45rem 1.6rem; position: relative; font-size: 1.1rem; line-height: 1.6; }
+  ul li::before { content: ''; position: absolute; left: 0; top: 0.85rem; width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); }
+
+  .bio-card {
+    background: var(--bg); border: 1px solid var(--slate-200);
+    border-radius: 24px; padding: 2.5rem 3rem; max-width: 720px; text-align: left;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .bio-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 0.25rem; }
+  .bio-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--slate-200); flex-shrink: 0; }
+  .bio-card h2 { font-size: 1.7rem; margin-bottom: 0.15rem; }
+  .bio-card .role { color: var(--green-500); font-size: 1rem; margin-bottom: 0.25rem; }
+  .bio-card .sub-role { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+  .bio-card ul li { font-size: 1rem; padding: 0.3rem 0 0.3rem 1.4rem; }
+  .bio-card ul li::before { top: 0.7rem; width: 6px; height: 6px; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 920px; margin-top: 1.5rem; }
+  .stat-box { background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 1.75rem 1.5rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .stat-box .num { font-size: 2.8rem; font-weight: 700; color: var(--green-500); letter-spacing: -0.03em; }
+  .stat-box .desc { font-size: 0.92rem; color: var(--body); margin-top: 0.4rem; line-height: 1.5; }
+  .stat-box .source { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 920px; text-align: left; }
+  .col-card { background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .col-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 0.75rem; max-width: none; }
+  .col-card ul li { font-size: 0.95rem; padding: 0.25rem 0 0.25rem 1.4rem; }
+  .col-card ul li::before { top: 0.6rem; width: 5px; height: 5px; }
+
+  .safety-box { background: #FFF7ED; border: 1px solid #FED7AA; border-radius: var(--radius); padding: 2rem 2.5rem; max-width: 800px; text-align: left; }
+  .safety-box h3 { color: #B45309; font-weight: 700; margin-bottom: 1rem; max-width: none; }
+  .safety-box ul li::before { background: #F59E0B; }
+  .safety-box ul li { font-size: 1rem; }
+
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 880px; margin-top: 1rem; }
+  .tool-item { background: var(--bg); border: 1px solid var(--slate-200); border-radius: 12px; padding: 1.25rem 1rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .tool-item .tool-name { font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.25rem; }
+  .tool-item .tool-desc { font-size: 0.82rem; color: var(--body); line-height: 1.5; }
+
+  .framework-list { max-width: 720px; text-align: left; counter-reset: step; margin-top: 0.5rem; }
+  .framework-list li { padding: 0.75rem 0 0.75rem 3rem; font-size: 1.05rem; position: relative; border-bottom: 1px solid var(--slate-100); }
+  .framework-list li:last-child { border-bottom: none; }
+  .framework-list li::before {
+    counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0.65rem;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--green-50);
+    color: var(--green-500); font-size: 0.85rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .activity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 960px; margin-top: 1rem; }
+  .activity-card {
+    background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius);
+    padding: 1.75rem 1.5rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative; overflow: hidden;
+  }
+  .activity-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--green-500), var(--green-400)); }
+  .activity-card .act-label { font-size: 0.7rem; font-weight: 700; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .activity-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.5rem; max-width: none; }
+  .activity-card p { font-size: 0.9rem; line-height: 1.55; }
+
+  .myth-fact { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; align-items: start; max-width: 860px; text-align: left; margin-top: 1rem; }
+  .myth-col, .fact-col { border-radius: var(--radius); padding: 1.75rem; }
+  .myth-col { background: #FEF2F2; border: 1px solid #FECACA; }
+  .myth-col h3 { color: var(--red-500); font-weight: 700; max-width: none; margin-bottom: 0.75rem; }
+  .myth-col ul li::before { background: var(--red-500); }
+  .fact-col { background: var(--green-50); border: 1px solid var(--green-100); }
+  .fact-col h3 { color: var(--green-600); font-weight: 700; max-width: none; margin-bottom: 0.75rem; }
+  .myth-fact .divider { width: 1px; background: var(--slate-200); align-self: stretch; margin-top: 0.5rem; }
+
+  .cta-box { background: var(--bg); border: 1px solid var(--slate-200); border-radius: 24px; padding: 2.5rem 3rem; max-width: 680px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); text-align: left; }
+  .cta-box h2 { font-size: 1.6rem; }
+
+  .big-quote { font-size: 1.8rem; font-weight: 700; color: var(--heading); line-height: 1.4; max-width: 750px; position: relative; padding-left: 2rem; }
+  .big-quote::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 2px; background: linear-gradient(to bottom, var(--green-500), var(--green-400)); }
+  .big-quote .attr { font-size: 0.95rem; font-weight: 400; color: var(--muted); margin-top: 0.75rem; }
+
+  .four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; max-width: 960px; margin-top: 1rem; }
+  .five-col { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; max-width: 1100px; margin-top: 1rem; }
+
+  .day-card {
+    background: var(--bg); border: 1px solid var(--slate-200); border-radius: var(--radius);
+    padding: 1.5rem 1.25rem; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative; overflow: hidden;
+  }
+  .day-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--green-500), var(--green-400)); }
+  .day-card .day-label { font-size: 0.7rem; font-weight: 700; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .day-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 0.5rem; max-width: none; }
+  .day-card ul li { font-size: 0.85rem; padding: 0.2rem 0 0.2rem 1.2rem; }
+  .day-card ul li::before { top: 0.55rem; width: 5px; height: 5px; }
+
+  .slide-table { border-collapse: collapse; max-width: 900px; margin-top: 1rem; font-size: 0.9rem; text-align: left; }
+  .slide-table th { background: var(--green-50); color: var(--heading); font-weight: 700; padding: 0.75rem 1rem; border-bottom: 2px solid var(--green-100); }
+  .slide-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--body); line-height: 1.5; }
+  .slide-table tr:last-child td { border-bottom: none; }
+
+  /* ── Image showcase ── */
+  .img-rounded { border-radius: 12px; border: 1px solid var(--slate-200); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-caption { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+  /* ── Logo gallery ── */
+  .logo-gallery {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    max-width: 900px; margin-top: 1rem;
+  }
+  .logo-gallery-item {
+    background: var(--bg); border: 1px solid var(--slate-200); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .logo-gallery-item img {
+    width: 100%; height: 140px; object-fit: contain; background: #f8f8f8; padding: 0.5rem;
+  }
+  .logo-gallery-item .logo-credit {
+    font-size: 0.72rem; color: var(--muted); padding: 0.4rem 0.5rem; text-align: center;
+    border-top: 1px solid var(--slate-100); width: 100;
+  }
+
+  /* ── Split layout (text + image) ── */
+  .split-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    max-width: 1000px; align-items: center; text-align: left;
+  }
+  .split-layout.reverse { direction: rtl; }
+  .split-layout.reverse > * { direction: ltr; }
+
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--green-500), var(--green-400)); transition: width 0.3s ease; z-index: 100; }
+
+  .nav { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; align-items: center; gap: 0.6rem; z-index: 100; }
+  .nav button {
+    width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--slate-200);
+    background: var(--bg); color: var(--slate-700); font-size: 0.95rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .nav button:hover { background: var(--green-500); color: #fff; border-color: var(--green-500); }
+  .nav button:disabled { opacity: 0.25; cursor: not-allowed; }
+  .nav .counter { font-size: 0.78rem; color: var(--muted); font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .slide { padding: 2rem 1.5rem; }
+    h1 { font-size: 2.2rem; } h2 { font-size: 1.6rem; }
+    .stat-grid, .two-col, .tool-grid, .activity-grid, .four-col, .five-col, .logo-gallery { grid-template-columns: 1fr; }
+    .myth-fact, .split-layout { grid-template-columns: 1fr; }
+    .myth-fact .divider { width: 100%; height: 1px; }
+    .bio-card, .cta-box { padding: 1.5rem; }
+  }
+  @media print {
+    body { overflow: visible; height: auto; }
+    .slide { position: relative !important; display: flex !important; page-break-after: always; height: auto; min-height: 100vh; }
+    .nav, .progress { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+  <!-- ====== 1. TITLE ====== -->
+  <div class="slide active">
+    <span class="tag tag-green"><span class="tag-dot"></span> ZIS x ETH Zurich</span>
+    <h1><span class="grad-text">Tech Entrepreneurship</span></h1>
+    <h3>A week-long bootcamp where students brainstorm, build, and pitch their own AI-powered startups</h3>
+    <p style="color:var(--muted); font-size:0.95rem; margin-top:1.5rem;">
+      August 2025 &middot; Instructors: Beatrice Collibee &amp; Saad Aissaoui
+    </p>
+  </div>
+
+  <!-- ====== 2. BEA BIO ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Meet Your Instructors</span>
+    <div class="bio-card">
+      <div class="bio-header">
+        <img class="bio-photo" src="images/monday_slide2_img6.png" alt="Beatrice Collibee">
+        <div>
+          <h2>Beatrice Collibee</h2>
+          <div class="role">PhD Candidate in Neuroscience, ETH Zurich</div>
+        </div>
+      </div>
+      <div class="sub-role">MSc Neural Systems &amp; Computation (ETH &amp; UZH) &middot; Originally from Canada</div>
+      <ul>
+        <li>Previously Marketing Manager for an e-learning company</li>
+        <li>Experience teaching programming (Scratch, Python) and building small games</li>
+        <li>Various machine learning projects and avid AI user</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====== 3. SAAD BIO ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Meet Your Instructors</span>
+    <div class="bio-card">
+      <div class="bio-header">
+        <img class="bio-photo" src="images/monday_slide3_img6.jpg" alt="Saad Aissaoui">
+        <div>
+          <h2>Saad Aissaoui</h2>
+          <div class="role">Master&rsquo;s Student in Data Science, ETH Zurich</div>
+        </div>
+      </div>
+      <div class="sub-role">BSc Computer Science (EPFL) &middot; Exchange at University of Washington &middot; Originally from Morocco</div>
+      <ul>
+        <li>Experience teaching programming (Java, Python)</li>
+        <li>Built UniQCM: a web app to help medicine students pass their exams</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====== 4. GRAND FINALE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> The Goal</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">Pitch Day</h1>
+    <p style="max-width:650px; margin-top:0.5rem; font-size:1.1rem;">
+      Present to a panel of expert judges in an ETH auditorium. Compete for prizes including a PS5, Meta VR Headset, and AirPods.
+    </p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:700px; margin-top:1.5rem;">
+      <div>
+        <img src="images/monday_slide5_img1.png" alt="ETH auditorium audience" class="img-rounded" style="width:100%; border-color:rgba(255,255,255,0.15);">
+        <p class="img-caption" style="color:rgba(255,255,255,0.5);">ETH auditorium on pitch day</p>
+      </div>
+      <div>
+        <img src="images/monday_slide6_img4.jpg" alt="Students with prizes" class="img-rounded" style="width:100%; border-color:rgba(255,255,255,0.15);">
+        <p class="img-caption" style="color:rgba(255,255,255,0.5);">Winners with their prizes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 5. EXAMPLE PROJECTS ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Inspiration</span>
+    <h2>Example Student Projects</h2>
+    <h3>Real websites and apps built by past participants in just one week</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:800px; margin-top:0.5rem;">
+      <div>
+        <img src="images/monday_slide6_img1.png" alt="PromptlyBud student project" class="img-rounded" style="width:100%;">
+        <p class="img-caption">PromptlyBud &mdash; AI study assistant</p>
+      </div>
+      <div>
+        <img src="images/monday_slide6_img2.png" alt="Handmade Handbags student project" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Handmade Handbags &mdash; e-commerce store</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 6. WEEK SCHEDULE ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Overview</span>
+    <h2>Week at a Glance</h2>
+    <h3>Five days from idea to pitch</h3>
+    <img src="images/monday_slide7_img1.png" alt="Week schedule" class="img-rounded" style="max-width:900px; width:100%; margin-top:0.5rem;">
+  </div>
+
+  <!-- ══════════ MONDAY ════════════════════ -->
+
+  <!-- ====== 7. MONDAY TITLE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Day 1</span>
+    <h1 style="font-size:2.8rem;">Monday: Discover &amp; Ideate</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">
+      Train your own AI model, learn what makes a great business idea, and master prompt engineering
+    </p>
+  </div>
+
+  <!-- ====== 8. MONDAY MISSION ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Monday Agenda</span>
+    <h2>Mission for Monday</h2>
+    <h3>By end of day, your team needs two things: your business idea (V1) and your logo</h3>
+    <div class="activity-grid">
+      <div class="activity-card">
+        <div class="act-label">Morning</div>
+        <h3>AI Fundamentals</h3>
+        <p>Train your own AI model using Google&rsquo;s Teachable Machine. Understand how AI learns from data.</p>
+      </div>
+      <div class="activity-card">
+        <div class="act-label">Midday</div>
+        <h3>Ethics &amp; Ideas</h3>
+        <p>AI ethics debate, then learn what makes a good business idea from Y Combinator.</p>
+      </div>
+      <div class="activity-card">
+        <div class="act-label">Afternoon</div>
+        <h3>Prompt &amp; Create</h3>
+        <p>Prompt Engineering Crash Course, brainstorm ideas, create your company name and logo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 9. WHAT IS AI ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Foundations</span>
+    <h2>What Is AI?</h2>
+    <h3>AI involves systems performing human-like tasks by learning from data and experience</h3>
+    <div class="split-layout">
+      <div>
+        <ul>
+          <li>AI systems learn and adapt over time</li>
+          <li>They use algorithms to recognize patterns</li>
+          <li>Different models are specialized for different tasks</li>
+          <li>The landscape evolves rapidly</li>
+        </ul>
+      </div>
+      <div>
+        <img src="images/monday_slide11_img1.png" alt="AI model comparison" class="img-rounded" style="width:100%;">
+        <p class="img-caption">AI models compared by intelligence, speed &amp; price</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 10. AI ETHICS ====== -->
+  <div class="slide">
+    <span class="tag tag-amber"><span class="tag-dot"></span> Ethics</span>
+    <h2>Ethical AI Usage</h2>
+    <h3>Important guidelines for responsible AI use in any context</h3>
+    <div class="safety-box">
+      <h3>General Principles</h3>
+      <ul>
+        <li><strong>Ensure AI fits the task</strong> and doesn&rsquo;t reinforce harmful biases</li>
+        <li><strong>Obtain consent</strong> before using AI on company or school projects</li>
+        <li><strong>Use secure tools</strong> and do not expose sensitive data</li>
+        <li><strong>Review all AI-generated content</strong> before sharing</li>
+        <li><strong>Disclose AI use</strong> to teams and clients</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====== 11. AI & ENVIRONMENT ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-amber"><span class="tag-dot"></span> The Debate</span>
+    <h2>AI vs. the Environment</h2>
+    <h3>AI is a powerful tool for sustainability, but it comes with a significant environmental footprint</h3>
+    <div class="myth-fact">
+      <div class="fact-col">
+        <h3>AI as a Solution</h3>
+        <ul>
+          <li>Processes 100,000s of data points faster than humans</li>
+          <li>Optimizes building energy to cut CO2 by 40%</li>
+          <li>Maps Antarctic icebergs and tracks deforestation</li>
+        </ul>
+      </div>
+      <div class="divider"></div>
+      <div class="myth-col">
+        <h3>AI&rsquo;s Footprint</h3>
+        <ul>
+          <li>Data center energy to double by 2026</li>
+          <li>One large model = 5x a car&rsquo;s lifetime emissions</li>
+          <li>A 15-question chat uses ~0.5L of water</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 12. AI ETHICS DEBATE ====== -->
+  <div class="slide">
+    <span class="tag tag-amber"><span class="tag-dot"></span> Activity</span>
+    <h2>AI Ethics Debate</h2>
+    <h3>Three topics, six teams. 15 minutes of prep, then structured debate with rebuttals and audience Q&amp;A.</h3>
+    <div class="activity-grid">
+      <div class="activity-card">
+        <div class="act-label">Topic 1</div>
+        <h3>AI Transparency</h3>
+        <p>Should apps and websites disclose when you&rsquo;re talking to a bot and clearly display AI-generated content?</p>
+      </div>
+      <div class="activity-card">
+        <div class="act-label">Topic 2</div>
+        <h3>Employee Monitoring</h3>
+        <p>Should businesses use AI-powered employee monitoring to boost productivity, even if it invades privacy?</p>
+      </div>
+      <div class="activity-card">
+        <div class="act-label">Topic 3</div>
+        <h3>AI Regulation</h3>
+        <p>Should a regulatory body certify AI systems before they go live, even at the cost of slower innovation?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 13. GOOD BUSINESS IDEAS ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Entrepreneurship</span>
+    <h2>What Makes a Good Business Idea?</h2>
+    <h3>Lessons from Y Combinator &mdash; the startup accelerator behind Airbnb, Stripe, Dropbox, and more</h3>
+    <div class="split-layout">
+      <div>
+        <img src="images/monday_slide20_img1.png" alt="Top YC companies" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Top YC companies by funding</p>
+      </div>
+      <div>
+        <h3 style="font-weight:700; color:var(--heading); margin-bottom:0.5rem;">4 Most Common Mistakes</h3>
+        <ul>
+          <li>Not solving a real problem</li>
+          <li>Building something nobody wants</li>
+          <li>Not talking to potential users</li>
+          <li>Waiting too long to launch</li>
+        </ul>
+        <h3 style="font-weight:700; color:var(--heading); margin-bottom:0.5rem; margin-top:1rem;">3 &ldquo;Bad&rdquo; Signs That Are Good</h3>
+        <ul>
+          <li>The idea seems too small</li>
+          <li>There&rsquo;s existing competition</li>
+          <li>It&rsquo;s hard to get started</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PROMPT ENGINEERING ═══════════ -->
+
+  <!-- ====== 14. PROMPT ENGINEERING TITLE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Crash Course</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">Prompt Engineering</h1>
+    <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">
+      How to command your AI co-founder. Based on Google&rsquo;s Prompt Engineering Course.
+    </p>
+  </div>
+
+  <!-- ====== 15. TCREI FRAMEWORK ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Framework</span>
+    <h2>The T.C.R.E.I. Framework</h2>
+    <div class="split-layout" style="margin-top:0.5rem;">
+      <div>
+        <img src="images/prompt_engineering_crash_course_slide4_img0.png" alt="Tiny Crabs Ride Enormous Iguanas" class="img-rounded" style="width:100%;">
+      </div>
+      <div>
+        <ul class="framework-list" style="margin-top:0;">
+          <li><strong>Task.</strong> What do you want the AI to do? Be specific.</li>
+          <li><strong>Context.</strong> Give the background story.</li>
+          <li><strong>References.</strong> Provide examples of what you like.</li>
+          <li><strong>Evaluate.</strong> Check the output.</li>
+          <li><strong>Iterate.</strong> Refine your prompt.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 16. PROMPT EXAMPLES ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Examples</span>
+    <h2>Prompting in Practice</h2>
+    <h3>See how persona, task, context, and references come together in real prompts</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; max-width:900px; margin-top:0.5rem;">
+      <div>
+        <img src="images/prompt_engineering_crash_course_slide5_img1.png" alt="Adding a persona" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Adding a persona to guide the output</p>
+      </div>
+      <div>
+        <img src="images/prompt_engineering_crash_course_slide9_img3.png" alt="Multimodal prompting" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Multimodal: combining text, images &amp; references</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 17. PROMPT TIPS ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Pro Tips</span>
+    <h2>Level Up Your Prompts</h2>
+    <h3>Techniques for when you&rsquo;re not getting exactly what you want</h3>
+    <div class="split-layout">
+      <div>
+        <ul>
+          <li><strong>Add a persona:</strong> &ldquo;Act as a marketing expert&hellip;&rdquo;</li>
+          <li><strong>Separate into sentences:</strong> Break complex requests into shorter parts</li>
+          <li><strong>Use analogies:</strong> Try &ldquo;Tell me a story about how our product becomes a hero&rdquo;</li>
+          <li><strong>Add constraints:</strong> &ldquo;One word, starts with E&rdquo;</li>
+          <li><strong>Go multimodal:</strong> Input images, sounds, and videos alongside text</li>
+        </ul>
+      </div>
+      <div>
+        <img src="images/prompt_engineering_crash_course_slide6_img1.png" alt="Product image generation" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Generating a product image with a detailed prompt</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 18. BRAINSTORMING ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Activity</span>
+    <h2>Brainstorm Your Business Idea</h2>
+    <h3>Use your new prompting skills to generate and refine startup ideas</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>The Problem Solver</h3>
+        <p style="font-size:0.9rem; font-style:italic; line-height:1.5;">
+          &ldquo;Act as a high school student. Brainstorm 5 common, annoying problems you face every day at school. For each, suggest a simple tech or app idea that could solve it. Present in a table.&rdquo;
+        </p>
+      </div>
+      <div class="col-card">
+        <h3>The Trend Spotter</h3>
+        <p style="font-size:0.9rem; font-style:italic; line-height:1.5;">
+          &ldquo;Act as a trend forecaster for Gen Z. Based on the current popularity of sustainable fashion and retro gaming, generate 3 unique business ideas that combine these two trends.&rdquo;
+        </p>
+      </div>
+    </div>
+    <p style="margin-top:1rem; font-size:0.9rem; color:var(--muted);">Tools: ChatGPT, Gemini, Claude &mdash; use any AI tool you prefer</p>
+  </div>
+
+  <!-- ====== 19. WHAT MAKES A GOOD LOGO ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Branding</span>
+    <h2>What Makes a Good Logo?</h2>
+    <h3>Your logo is the face of your brand. It should be simple, memorable, and tell your story at a glance.</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>Principles of Great Logo Design</h3>
+        <ul>
+          <li><strong>Simple:</strong> Works at any size, from favicon to billboard</li>
+          <li><strong>Memorable:</strong> Can you draw it from memory?</li>
+          <li><strong>Relevant:</strong> Reflects your product, industry, or values</li>
+          <li><strong>Versatile:</strong> Looks good on light &amp; dark backgrounds</li>
+          <li><strong>Timeless:</strong> Avoid trendy effects that age quickly</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Common Mistakes</h3>
+        <ul>
+          <li><strong>Too complex:</strong> Tiny details disappear at small sizes</li>
+          <li><strong>Too many colors:</strong> Stick to 2&ndash;3 colors max</li>
+          <li><strong>Hard to read fonts:</strong> If people can&rsquo;t read your name, they can&rsquo;t find you</li>
+          <li><strong>No contrast:</strong> Test on white AND dark backgrounds</li>
+          <li><strong>Generic clipart:</strong> AI can help, but curate &amp; customize the output</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 20. STUDENT LOGO SHOWCASE ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Logo Design Contest</span>
+    <h2>Student Logos from Last Year</h2>
+    <h3>These were all created in a single afternoon using AI tools + manual refinement</h3>
+    <div class="logo-gallery">
+      <div class="logo-gallery-item">
+        <img src="images/logos/AIStartUP - Mateo Wieghardt.png" alt="AI Tutor logo">
+        <div class="logo-credit">Mateo W. &mdash; AI Tutor</div>
+      </div>
+      <div class="logo-gallery-item">
+        <img src="images/logos/Looman w_name - Alec Fairfield.png" alt="Looman logo">
+        <div class="logo-credit">Alec F. &mdash; Looman</div>
+      </div>
+      <div class="logo-gallery-item">
+        <img src="images/logos/nexagroup5.jpg - Luca Vallisneri.png" alt="Nexa logo">
+        <div class="logo-credit">Luca V. &mdash; Nexa</div>
+      </div>
+      <div class="logo-gallery-item">
+        <img src="images/logos/coconut . - Aimilia Konstantopoulou.png" alt="Be Vogue logo">
+        <div class="logo-credit">Aimilia K. &mdash; Be Vogue</div>
+      </div>
+    </div>
+    <p style="margin-top:1rem; font-size:0.9rem; color:var(--muted);">Notice: simple shapes, clear text, limited color palettes, and strong brand identity</p>
+  </div>
+
+  <!-- ====== 21. LOGO CREATION TOOLS ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Tools</span>
+    <h2>Logo Creation Workflow</h2>
+    <h3>Use AI to generate concepts, then refine with design tools</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; max-width:960px; margin-top:0.5rem;">
+      <div style="text-align:center;">
+        <img src="images/monday_slide33_img2.png" alt="Namelix" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Step 1: Generate names with <strong>Namelix</strong></p>
+      </div>
+      <div style="text-align:center;">
+        <img src="images/monday_slide37_img1.png" alt="Playground AI" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Step 2: Create logo concepts with <strong>Playground</strong></p>
+      </div>
+      <div style="text-align:center;">
+        <img src="images/monday_slide39_img2.png" alt="Adobe Firefly" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Step 3: Refine with <strong>Adobe Firefly</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TUESDAY ═══════════════════ -->
+
+  <!-- ====== 22. TUESDAY TITLE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Day 2</span>
+    <h1 style="font-size:2.8rem;">Tuesday: Build &amp; Research</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">
+      Create your brand identity, build your website, and refine your business idea with real market research
+    </p>
+  </div>
+
+  <!-- ====== 23. JUDGING CRITERIA ====== -->
+  <div class="slide">
+    <span class="tag tag-amber"><span class="tag-dot"></span> Competition</span>
+    <h2>Judging Criteria</h2>
+    <h3>How the expert panel will evaluate your final pitch</h3>
+    <div class="four-col">
+      <div class="day-card">
+        <div class="day-label">Presentation</div>
+        <h3>Visual &amp; Verbal</h3>
+        <ul>
+          <li>Visual design consistency</li>
+          <li>Use of color, fonts, layout</li>
+          <li>Structure &amp; clarity</li>
+          <li>Speaking confidence</li>
+        </ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">Business Plan</div>
+        <h3>Strategy &amp; Analysis</h3>
+        <ul>
+          <li>Market analysis depth</li>
+          <li>Value proposition</li>
+          <li>Competitor analysis</li>
+          <li>Marketing strategies</li>
+        </ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">Technology</div>
+        <h3>Product &amp; Design</h3>
+        <ul>
+          <li>Functionality &amp; usability</li>
+          <li>Innovation &amp; originality</li>
+          <li>UI/UX design quality</li>
+        </ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">Teamwork</div>
+        <h3>Collaboration</h3>
+        <ul>
+          <li>Effective collaboration</li>
+          <li>Individual accountability</li>
+          <li>Task division &amp; synergy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 24. PITCH STRUCTURE ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Framework</span>
+    <h2>Shark Tank&ndash;Style Pitch Structure</h2>
+    <div class="split-layout">
+      <ul class="framework-list" style="margin-top:0;">
+        <li><strong>Catchy intro to the problem space.</strong> Hook the audience</li>
+        <li><strong>Introduction of the team.</strong> Who are you and why you?</li>
+        <li><strong>Explain your solution.</strong> What does it do?</li>
+        <li><strong>Competition &amp; differentiation.</strong> Why are you better?</li>
+        <li><strong>Showcase your implementation.</strong> Live demo</li>
+        <li><strong>Revenue &amp; target markets.</strong> How will you make money?</li>
+        <li><strong>The ask (for fun!).</strong> Propose an investment</li>
+      </ul>
+      <div>
+        <img src="images/tuesday_slide5_img2.jpg" alt="Shark Tank pitch" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Shark Tank&ndash;style presentation format</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 25. BRAND IDENTITY ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Branding</span>
+    <h2>Brand Identity &amp; Colors</h2>
+    <h3>Your website, logo, pitch deck, and marketing should have a cohesive &ldquo;look&rdquo;</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>Activity: Find Your Brand Colors</h3>
+        <ul>
+          <li>Choose a palette of 4&ndash;5 colors</li>
+          <li>Save the hex codes (e.g. #2D3047)</li>
+          <li>Use these consistently everywhere</li>
+          <li>Inspiration: <strong>ColorHunt.co</strong></li>
+          <li>AI palettes: <strong>Colormind.io</strong></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Why It Matters</h3>
+        <ul>
+          <li>Consistency builds trust and recognition</li>
+          <li>Colors evoke emotions and set tone</li>
+          <li>Professional look = professional product</li>
+          <li>Judges evaluate visual design</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 26. WEBSITE BUILDERS ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Build</span>
+    <h2>Choose Your Weapon</h2>
+    <h3>Two paths to building your startup&rsquo;s website</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:860px; margin-top:0.5rem;">
+      <div class="col-card" style="text-align:center;">
+        <img src="images/tuesday_slide11_img1.jpg" alt="Shopify" class="img-rounded" style="width:100%; margin-bottom:1rem;">
+        <h3>Shopify</h3>
+        <ul>
+          <li>Best for speed and function</li>
+          <li>Professional store in under an hour</li>
+          <li>Pre-built themes</li>
+          <li>Choose if you want to sell fast</li>
+        </ul>
+      </div>
+      <div class="col-card" style="text-align:center;">
+        <img src="images/tuesday_slide14_img4.png" alt="Lovable vibe coding" class="img-rounded" style="width:100%; max-width:200px; margin:0 auto 1rem;">
+        <h3>Lovable (AI Builder)</h3>
+        <ul>
+          <li>Generate a custom website from a prompt</li>
+          <li>100% unique; creative tool first</li>
+          <li>Full code output</li>
+          <li>Choose if you want something flexible</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== LOVABLE WALKTHROUGH ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Live Demo</span>
+    <h2>Lovable Walkthrough</h2>
+    <h3>From prompt to published website in minutes &mdash; here&rsquo;s the full flow</h3>
+    <img src="images/lovable-walkthrough.gif" alt="Lovable walkthrough" class="img-rounded" style="max-width:900px; width:100%; margin-top:0.5rem;">
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.75rem;">Dashboard &rarr; Write prompt &rarr; AI builds your site &rarr; Preview &rarr; Edit code &rarr; Publish to .lovable.app</p>
+  </div>
+
+  <!-- ====== 27. UI/UX PRINCIPLES ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Design</span>
+    <h2>UI/UX Quick Guide</h2>
+    <h3>UI = How it looks. UX = How it feels.</h3>
+    <ul class="framework-list">
+      <li><strong>The 5-second test.</strong> Can a new visitor understand what your business is about in 5 seconds?</li>
+      <li><strong>Clear calls to action.</strong> Use big, action-oriented buttons: &ldquo;Shop The Collection&rdquo;, &ldquo;Get a Quote&rdquo;</li>
+      <li><strong>Consistent branding.</strong> Fonts, colors, and button styles should look the same on every page</li>
+      <li><strong>Less is more.</strong> Don&rsquo;t clutter pages or put buttons too close together</li>
+      <li><strong>Mobile first.</strong> Most users will visit on their phones. Test it.</li>
+    </ul>
+  </div>
+
+  <!-- ====== 28. THERANOS ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Case Study</span>
+    <div class="split-layout" style="max-width:900px;">
+      <div>
+        <h1 style="font-size:2.2rem; max-width:none;">A Story of Fraud: Theranos</h1>
+        <p style="margin-top:1rem; font-size:1rem;">
+          What happens when a startup prioritizes hype over honesty? A cautionary tale about integrity in entrepreneurship.
+        </p>
+        <ul style="margin-top:1rem;">
+          <li>What outlandish claims could you make for your idea?</li>
+          <li>Why didn&rsquo;t investors do their research?</li>
+          <li>What lessons can future entrepreneurs learn?</li>
+        </ul>
+      </div>
+      <div>
+        <img src="images/tuesday_slide23_img1.jpg" alt="Theranos Trial" class="img-rounded" style="width:100%; border-color:rgba(255,255,255,0.15);">
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 29. MARKET RESEARCH ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Research</span>
+    <h2>Why Market Research Matters</h2>
+    <h3>Listen to what users actually do, not what you think they want</h3>
+    <div class="myth-fact">
+      <div class="fact-col">
+        <h3>Great Pivot: YouTube</h3>
+        <ul>
+          <li>Original idea: a video-dating website</li>
+          <li>Users uploaded videos of everything <em>else</em></li>
+          <li>They listened to actual behavior and pivoted</li>
+          <li>Result: the world&rsquo;s largest video platform</li>
+        </ul>
+      </div>
+      <div class="divider"></div>
+      <div class="myth-col">
+        <h3>Cautionary Tale: Quibi</h3>
+        <ul>
+          <li>$1.75B for short-form mobile streaming</li>
+          <li>Launched during COVID, ignored TikTok</li>
+          <li>Built for a non-existent market</li>
+          <li>Shut down within 6 months</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 30. APP CREATION TOOLS ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Tools</span>
+    <h2>AI App Creation Tools</h2>
+    <h3>Choose the right tool for your product type</h3>
+    <div class="four-col">
+      <div class="day-card">
+        <div class="day-label">Design</div>
+        <h3>Canva</h3>
+        <ul><li>Fast &amp; easy app screen design</li><li>Huge library of free assets</li><li>Best ease of use</li></ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">No-Code Apps</div>
+        <h3>Glide</h3>
+        <ul><li>Real working apps with AI</li><li>Integrates Google Sheets</li><li>Build in minutes</li></ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">AI Builder</div>
+        <h3>Lovable</h3>
+        <ul><li>Create apps by chatting</li><li>Full code output</li><li>Most flexible option</li></ul>
+      </div>
+      <div class="day-card">
+        <div class="day-label">Professional</div>
+        <h3>Figma</h3>
+        <ul><li>Professional prototypes</li><li>Interactive mockups</li><li>Industry standard</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ WEDNESDAY ═════════════════ -->
+
+  <!-- ====== 31. WEDNESDAY TITLE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Day 3</span>
+    <h1 style="font-size:2.8rem;">Wednesday: Market &amp; Present</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">
+      Master marketing fundamentals, create social media content, and start building your pitch deck
+    </p>
+  </div>
+
+  <!-- ====== 32. SOCIAL MEDIA BY GENERATION ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Marketing</span>
+    <h2>Know Your Audience</h2>
+    <h3>Different generations require different marketing approaches and channels</h3>
+    <table class="slide-table">
+      <tr><th>Generation</th><th>Tone &amp; Language</th><th>Core Message</th><th>Channels</th></tr>
+      <tr><td><strong>Gen Alpha</strong> (0&ndash;14)</td><td>Bright, playful, parent-approved</td><td>Safe, fun, shareable</td><td>Educational apps</td></tr>
+      <tr><td><strong>Gen Z</strong> (14&ndash;28)</td><td>Authentic, meme-conscious</td><td>Join the movement</td><td>TikTok, Instagram</td></tr>
+      <tr><td><strong>Millennials</strong> (29&ndash;44)</td><td>Conversational, aspirational</td><td>Upgrade your life</td><td>Podcasts, Newsletters</td></tr>
+      <tr><td><strong>Gen X</strong> (45&ndash;60)</td><td>Straightforward, no hype</td><td>Reliable, proven</td><td>Email, Google Search</td></tr>
+      <tr><td><strong>Boomers</strong> (60+)</td><td>Respectful, step-by-step</td><td>Easy to use, expert-backed</td><td>Email, TV, Print</td></tr>
+    </table>
+  </div>
+
+  <!-- ====== 33. AIDA FRAMEWORK ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Framework</span>
+    <h2>The AIDA Marketing Framework</h2>
+    <h3>A proven structure for compelling marketing content</h3>
+    <div class="four-col">
+      <div class="day-card"><div class="day-label">Step 1</div><h3>Attention</h3><ul><li>Scroll-stopping headline</li><li>Eye-catching image</li><li>Bold opening statement</li></ul></div>
+      <div class="day-card"><div class="day-label">Step 2</div><h3>Interest</h3><ul><li>Relatable problem</li><li>Intriguing fact</li><li>&ldquo;Did you know&hellip;?&rdquo;</li></ul></div>
+      <div class="day-card"><div class="day-label">Step 3</div><h3>Desire</h3><ul><li>Benefits, not features</li><li>&ldquo;What&rsquo;s in it for me?&rdquo;</li><li>Show the transformation</li></ul></div>
+      <div class="day-card"><div class="day-label">Step 4</div><h3>Action</h3><ul><li>Clear CTA</li><li>&ldquo;Sign up&rdquo; / &ldquo;Shop now&rdquo;</li><li>One thing to do next</li></ul></div>
+    </div>
+    <p style="margin-top:1.25rem; font-size:0.95rem; max-width:700px;">
+      <strong>Features vs. Benefits:</strong> &ldquo;6.5&Prime; OLED display&rdquo; is a feature. &ldquo;Enjoy a clearer screen in bright sunlight&rdquo; is a benefit. Sell benefits.
+    </p>
+  </div>
+
+  <!-- ====== 34. SOCIAL MEDIA VIDEO ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Content Creation</span>
+    <h2>Blueprint for a Great Social Media Video</h2>
+    <h3>The first 3 seconds are everything. No logos, no slow intros.</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>Video Best Practices</h3>
+        <ul>
+          <li><strong>Hook immediately:</strong> &ldquo;Want flawless skin?&rdquo;</li>
+          <li>Keep it under 30 seconds</li>
+          <li>Add captions &mdash; users watch with sound off</li>
+          <li>Use trendy songs/sounds for reach</li>
+          <li>Use brand colors &amp; fonts consistently</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Gaming the Algorithm</h3>
+        <ul>
+          <li><strong>Early engagement:</strong> Platforms boost videos popular in the first hour</li>
+          <li><strong>Completion rate &gt; watch time:</strong> Videos watched to the end rank higher</li>
+          <li><strong>Make it re-watchable:</strong> Loops, puzzles, easter eggs</li>
+          <li><strong>Hashtags:</strong> Use trending ones</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 35. AI VIDEO TOOLS ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Tools</span>
+    <h2>AI Video Generation Tools</h2>
+    <h3>Don&rsquo;t just generate slop &mdash; be creative, iterate, and choose the right tool for your brand</h3>
+    <div class="tool-grid">
+      <div class="tool-item"><div class="tool-name">Runway</div><div class="tool-desc">Highest quality AI videos &middot; Creative &amp; artistic concepts &middot; Limited free tier</div></div>
+      <div class="tool-item"><div class="tool-name">Pika</div><div class="tool-desc">AI-generated filters &amp; clips &middot; Creates clips from simple prompts &middot; Fun effects</div></div>
+      <div class="tool-item"><div class="tool-name">Invideo AI</div><div class="tool-desc">Script &rarr; complete video &middot; Stock footage + voiceover &middot; Great for explainers</div></div>
+      <div class="tool-item"><div class="tool-name">VEED</div><div class="tool-desc">Online video editor &middot; AI features built in &middot; Similar to Invideo &middot; Free plan</div></div>
+      <div class="tool-item"><div class="tool-name">Synthesia</div><div class="tool-desc">AI avatar spokesperson &middot; Professional talking-head videos &middot; From your script</div></div>
+      <div class="tool-item"><div class="tool-name">CapCut</div><div class="tool-desc">DIY video editing on your phone &middot; Easy to use &middot; Great for quick social content</div></div>
+    </div>
+  </div>
+
+  <!-- ====== 36. SEO ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Growth</span>
+    <h2>SEO &amp; Marketing Essentials</h2>
+    <h3>Drive traffic to your website with AI-powered content</h3>
+    <div class="split-layout">
+      <div>
+        <h3 style="font-weight:700; color:var(--heading); margin-bottom:0.5rem;">Website Copy with AI</h3>
+        <ul>
+          <li>Use AI to write headlines, product descriptions, and blog posts</li>
+          <li>Prompt: &ldquo;Write a landing page headline using AIDA for [your product]&rdquo;</li>
+          <li>Always review and personalize</li>
+        </ul>
+        <h3 style="font-weight:700; color:var(--heading); margin-bottom:0.5rem; margin-top:1rem;">SEO Basics</h3>
+        <ul>
+          <li>More traffic = more sales</li>
+          <li>Prompt: &ldquo;What are 10 keywords my audience would search for?&rdquo;</li>
+          <li>Write blog posts with those keywords</li>
+          <li>Use <strong>Google Trends</strong> to validate</li>
+        </ul>
+      </div>
+      <div>
+        <img src="images/wednesday_slide17_img0.jpg" alt="Performance insights" class="img-rounded" style="width:100%;">
+        <p class="img-caption">Marketing analytics and performance insights</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 37. PITCH DECK ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Afternoon</span>
+    <h1 style="font-size:2.6rem; max-width:800px;">Creating Your Pitch Deck</h1>
+    <p style="max-width:650px; margin-top:1rem; font-size:1.15rem;">
+      Use <strong>gamma.app</strong> to generate a first draft of your pitch deck with AI, then customize it to match your brand.
+    </p>
+    <div style="margin-top:1.5rem;">
+      <img src="images/wednesday_slide27_img0.jpg" alt="Pitch deck creation" class="img-rounded" style="max-width:500px; width:100%; border-color:rgba(255,255,255,0.15);">
+    </div>
+  </div>
+
+  <!-- ══════════ THURSDAY ══════════════════ -->
+
+  <!-- ====== 38. THURSDAY TITLE ====== -->
+  <div class="slide bg-dark">
+    <span class="tag tag-white"><span class="tag-dot"></span> Day 4</span>
+    <h1 style="font-size:2.8rem;">Thursday: Polish &amp; Practice</h1>
+    <p style="max-width:600px; margin-top:1rem; font-size:1.15rem;">
+      Finalize your pitch deck, practice your presentation, and get peer feedback before the big day
+    </p>
+  </div>
+
+  <!-- ====== 39. WHAT YOU'VE BUILT ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Progress</span>
+    <h2>Look How Far You&rsquo;ve Come</h2>
+    <h3>In just three days, you&rsquo;ve accomplished an incredible amount</h3>
+    <div class="tool-grid">
+      <div class="tool-item"><div class="tool-name">Trained an AI Model</div><div class="tool-desc">Built and tested your own image classifier using Teachable Machine</div></div>
+      <div class="tool-item"><div class="tool-name">Learned Prompt Engineering</div><div class="tool-desc">Mastered the T.C.R.E.I. framework for commanding AI tools</div></div>
+      <div class="tool-item"><div class="tool-name">Developed Your Idea</div><div class="tool-desc">Brainstormed, validated, and refined your business concept</div></div>
+      <div class="tool-item"><div class="tool-name">Created Your Website</div><div class="tool-desc">Built a live, functional website using Shopify or Lovable</div></div>
+      <div class="tool-item"><div class="tool-name">Marketing Content</div><div class="tool-desc">Created social media videos, ads, and SEO-optimized copy</div></div>
+      <div class="tool-item"><div class="tool-name">Pitch Deck</div><div class="tool-desc">Built a compelling presentation for your final pitch</div></div>
+    </div>
+  </div>
+
+  <!-- ====== 40. THURSDAY AGENDA ====== -->
+  <div class="slide bg-alt">
+    <span class="tag tag-green"><span class="tag-dot"></span> Today&rsquo;s Plan</span>
+    <h2>Mission for Thursday</h2>
+    <h3>Final day of preparation before Pitch Day</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>Morning</h3>
+        <ul><li>Review judging criteria</li><li>Finalize your pitch deck</li><li>Polish your website</li><li>Prepare your live demo</li></ul>
+      </div>
+      <div class="col-card">
+        <h3>Afternoon</h3>
+        <ul><li>Practice presentations</li><li>Present to each other</li><li>Get constructive feedback</li><li>Final adjustments</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 41. ALL RESOURCES ====== -->
+  <div class="slide">
+    <span class="tag tag-green"><span class="tag-dot"></span> Resources</span>
+    <h2>All Tools &amp; Resources</h2>
+    <h3>Everything you&rsquo;ve used this week, in one place</h3>
+    <div class="two-col" style="margin-top:0.5rem;">
+      <div class="col-card">
+        <h3>AI &amp; Building</h3>
+        <ul>
+          <li><strong>Teachable Machine</strong> &ndash; Train AI models</li>
+          <li><strong>ChatGPT / Gemini / Claude</strong> &ndash; AI assistants</li>
+          <li><strong>Shopify</strong> &ndash; Online stores</li>
+          <li><strong>Lovable</strong> &ndash; AI website builder</li>
+          <li><strong>Glide</strong> &ndash; No-code apps</li>
+          <li><strong>Figma</strong> &ndash; Design prototypes</li>
+          <li><strong>Gamma</strong> &ndash; AI pitch decks</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Branding &amp; Marketing</h3>
+        <ul>
+          <li><strong>Namelix</strong> &ndash; Business name generator</li>
+          <li><strong>Playground / Adobe Firefly</strong> &ndash; Logo creation</li>
+          <li><strong>Canva</strong> &ndash; Design &amp; social graphics</li>
+          <li><strong>CapCut / VEED</strong> &ndash; Video editing</li>
+          <li><strong>Runway / Pika / Invideo</strong> &ndash; AI video</li>
+          <li><strong>Synthesia</strong> &ndash; AI spokesperson</li>
+          <li><strong>Google Trends</strong> &ndash; SEO research</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 42. CLOSING ====== -->
+  <div class="slide bg-footer">
+    <h1 style="font-size:2.8rem;">Good Luck!</h1>
+    <p style="color:var(--muted); font-size:1.1rem; margin-top:1rem; max-width:600px;">
+      You&rsquo;ve learned to ideate, build, market, and pitch &mdash; all powered by AI. Now go show the judges what you&rsquo;ve built.
+    </p>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:2rem;">
+      ZIS x ETH: Tech Entrepreneurship &middot; August 2025<br>
+      Instructors: Beatrice Collibee &amp; Saad Aissaoui
+    </p>
+  </div>
+
+</div>
+
+<div class="nav">
+  <span class="counter" id="counter">1 / 43</span>
+  <button onclick="go(-1)" id="prevBtn">&larr;</button>
+  <button onclick="go(1)" id="nextBtn">&rarr;</button>
+</div>
+
+<script>
+let idx = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function show(n) {
+  idx = Math.max(0, Math.min(total - 1, n));
+  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('counter').textContent = `${idx + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === total - 1;
+  document.getElementById('progress').style.width = `${((idx + 1) / total) * 100}%`;
+
+  const current = slides[idx];
+  const isDark = current.classList.contains('bg-dark') || current.classList.contains('bg-footer');
+  document.querySelectorAll('.nav button').forEach(b => {
+    b.style.background = isDark ? 'rgba(255,255,255,0.1)' : '';
+    b.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : '';
+    b.style.color = isDark ? '#fff' : '';
+  });
+  document.querySelector('.nav .counter').style.color = isDark ? 'rgba(255,255,255,0.4)' : '';
+}
+
+function go(dir) { show(idx + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  else if (e.key === 'ArrowLeft') go(-1);
+  else if (e.key === 'Home') show(0);
+  else if (e.key === 'End') show(total - 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) go(diff > 0 ? 1 : -1);
+});
+
+show(0);
+</script>
+</body>
+</html>
